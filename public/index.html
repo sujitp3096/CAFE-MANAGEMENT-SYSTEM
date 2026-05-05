@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 24px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+        }
+        
+        .tables-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .table-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .table-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .table-card.available {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+        
+        .table-card.occupied {
+            background: #ffebee;
+            border-color: #f44336;
+            opacity: 0.7;
+        }
+        
+        .table-card.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+        
+        .table-card h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .menu-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .category-group {
+            margin-bottom: 25px;
+        }
+        
+        .category-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #667eea;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+        
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        
+        .menu-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            background: #e9ecef;
+        }
+        
+        .item-info h4 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .item-price {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .add-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .add-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.05);
+        }
+        
+        .cart-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+        
+        .cart-items {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .cart-item-price {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .qty-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .qty-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .remove-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .cart-total {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            padding: 15px 0;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .place-order-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .place-order-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .place-order-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .orders-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .order-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .order-info {
+            flex: 1;
+        }
+        
+        .order-items {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .complete-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .complete-btn:hover {
+            background: #45a049;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-section {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏪 Cafe Management System</h1>
+            <div class="stats">
+                <div class="stat-card">
+                    <div>📊 Active Orders</div>
+                    <h3 id="activeOrdersCount">0</h3>
+                </div>
+                <div class="stat-card">
+                    <div>🪑 Available Tables</div>
+                    <h3 id="availableTablesCount">0</h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div>
+                <div class="tables-section">
+                    <h2>📌 Select Table</h2>
+                    <div class="tables-grid" id="tablesGrid"></div>
+                </div>
+                
+                <div class="menu-section">
+                    <h2>🍽️ Menu</h2>
+                    <div id="menuItems"></div>
+                </div>
+                
+                <div class="orders-section">
+                    <h2>🔄 Active Orders</h2>
+                    <div id="activeOrders"></div>
+                </div>
+            </div>
+            
+            <div class="cart-section">
+                <h2>🛒 Current Order</h2>
+                <div id="selectedTableInfo" style="margin: 10px 0; padding: 8px; background: #f0f0f0; border-radius: 5px;">
+                    No table selected
+                </div>
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-state">Cart is empty</div>
+                </div>
+                <div class="cart-total">
+                    Total: ₹<span id="cartTotal">0</span>
+                </div>
+                <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()" disabled>
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedTable = null;
+        let cart = [];
+        let menuItems = [];
+        
+        // Load initial data
+        loadTables();
+        loadMenu();
+        loadActiveOrders();
+        
+        // Refresh every 5 seconds
+        setInterval(() => {
+            loadActiveOrders();
+            loadTables();
+        }, 5000);
+        
+        async function loadTables() {
+            const response = await fetch('/api/tables');
+            const tables = await response.json();
+            
+            const availableCount = tables.filter(t => t.status === 'available').length;
+            document.getElementById('availableTablesCount').innerText = availableCount;
+            
+            const tablesGrid = document.getElementById('tablesGrid');
+            tablesGrid.innerHTML = tables.map(table => `
+                <div class="table-card ${table.status} ${selectedTable === table.table_id ? 'selected' : ''}" 
+                     onclick="selectTable(${table.table_id}, ${table.table_number})">
+                    <h3>Table ${table.table_number}</h3>
+                    <p>🪑 Cap: ${table.capacity}</p>
+                    <p>${table.status === 'available' ? '✅ Available' : '🔴 Occupied'}</p>
+                </div>
+            `).join('');
+        }
+        
+        function selectTable(tableId, tableNumber) {
+            const table = document.querySelector(`.table-card[onclick*="${tableId}"]`);
+            if (table && table.classList.contains('occupied')) {
+                alert('This table is currently occupied!');
+                return;
+            }
+            selectedTable = { id: tableId, number: tableNumber };
+            document.getElementById('selectedTableInfo').innerHTML = `✅ Selected: Table ${tableNumber}`;
+            document.getElementById('placeOrderBtn').disabled = false;
+            loadTables(); // Refresh to show selection
+        }
+        
+        async function loadMenu() {
+            const response = await fetch('/api/menu');
+            menuItems = await response.json();
+            
+            // Group by category
+            const grouped = menuItems.reduce((acc, item) => {
+                if (!acc[item.category_name]) acc[item.category_name] = [];
+                acc[item.category_name].push(item);
+                return acc;
+            }, {});
+            
+            const menuDiv = document.getElementById('menuItems');
+            menuDiv.innerHTML = Object.entries(grouped).map(([category, items]) => `
+                <div class="category-group">
+                    <div class="category-title">${category}</div>
+                    <div class="menu-items">
+                        ${items.map(item => `
+                            <div class="menu-item">
+                                <div class="item-info">
+                                    <h4>${item.item_name}</h4>
+                                    <div class="item-price">₹${item.price}</div>
+                                </div>
+                                <button class="add-btn" onclick="addToCart(${item.item_id}, '${item.item_name}', ${item.price})">
+                                    Add
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function addToCart(itemId, itemName, price) {
+            const existing = cart.find(item => item.item_id === itemId);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({ item_id: itemId, name: itemName, price, quantity: 1 });
+            }
+            updateCart();
+        }
+        
+        function updateCart() {
+            const cartDiv = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                cartDiv.innerHTML = '<div class="empty-state">Cart is empty</div>';
+                document.getElementById('cartTotal').innerText = '0';
+                return;
+            }
+            
+            cartDiv.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">₹${item.price} each</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="qty-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                        <span style="min-width: 30px; text-align: center;">${item.quantity}</span>
+                        <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                        <button class="remove-btn" onclick="removeFromCart(${index})">×</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cartTotal').innerText = total.toFixed(2);
+        }
+        
+        function updateQuantity(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCart();
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+        
+        async function placeOrder() {
+            if (!selectedTable) {
+                alert('Please select a table first!');
+                return;
+            }
+            if (cart.length === 0) {
+                alert('Please add items to the cart!');
+                return;
+            }
+            
+            const orderItems = cart.map(item => ({
+                item_id: item.item_id,
+                quantity: item.quantity,
+                price: item.price
+            }));
+            
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    table_id: selectedTable.id,
+                    items: orderItems
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                alert(`✅ Order placed successfully for Table ${selectedTable.number}!`);
+                cart = [];
+                selectedTable = null;
+                document.getElementById('selectedTableInfo').innerHTML = 'No table selected';
+                document.getElementById('placeOrderBtn').disabled = true;
+                updateCart();
+                loadTables();
+                loadActiveOrders();
+            } else {
+                alert('❌ Error placing order: ' + data.error);
+            }
+        }
+        
+        async function loadActiveOrders() {
+            const response = await fetch('/api/active-orders');
+            const orders = await response.json();
+            
+            document.getElementById('activeOrdersCount').innerText = orders.length;
+            
+            const ordersDiv = document.getElementById('activeOrders');
+            if (orders.length === 0) {
+                ordersDiv.innerHTML = '<div class="empty-state">No active orders</div>';
+                return;
+            }
+            
+            ordersDiv.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-info">
+                        <strong>Order #${order.order_id}</strong> - Table ${order.table_number}
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <span style="display: inline-block; background: #e9ecef; padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 12px;">
+                                    ${item.item_name} x${item.quantity}
+                                </span>
+                            `).join('')}
+                        </div>
+                        <strong>Total: ₹${order.total_amount}</strong>
+                    </div>
+                    <button class="complete-btn" onclick="completeOrder(${order.order_id})">
+                        ✅ Complete
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        async function completeOrder(orderId) {
+            const response = await fetch(`/api/orders/${orderId}/complete`, {
+                method: 'PUT'
+            });
+            
+            if (response.ok) {
+                alert('✅ Order completed successfully!');
+                loadActiveOrders();
+                loadTables();
+            }
+        }
+    </script>
+</body>
+</html>
