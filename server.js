@@ -8,7 +8,7 @@ const path = require('path');
 const app = express();
 const port = 3000;
 
-// PostgreSQL connection - UPDATE YOUR PASSWORD HERE
+// PostgreSQL connection - UPDATE YOUR PASSWORD HER
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
